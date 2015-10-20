@@ -44,9 +44,16 @@ class WorkoutsExercises
     protected $_notes;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\OneToOne(targetEntity="Exercises", mappedBy="WorkoutsExercises")
+     * @ORM\JoinColumn(name="id_ex", referencedColumnName="_id")
      */
-    protected $_sets;
+    protected $exercises;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Sets", mappedBy="WorkoutsExercises")
+     * @ORM\JoinColumn(name="_id", referencedColumnName="_id_wo_ex")
+     */
+    protected $sets;
 
 
     /**
@@ -170,12 +177,123 @@ class WorkoutsExercises
     }
 
     /**
+     * Set name
+     *
+     * @param \GymBundle\Entity\Exercises $name
+     *
+     * @return WorkoutsExercises
+     */
+    public function setName(\GymBundle\Entity\Exercises $name = null)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return \GymBundle\Entity\Exercises
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set names
+     *
+     * @param string $names
+     *
+     * @return WorkoutsExercises
+     */
+    public function setNames($names)
+    {
+        $this->names = $names;
+
+        return $this;
+    }
+
+    /**
+     * Get names
+     *
+     * @return string
+     */
+    public function getNames()
+    {
+        return $this->names;
+    }
+
+    /**
+     * Set exercises
+     *
+     * @param \GymBundle\Entity\Exercises $exercises
+     *
+     * @return WorkoutsExercises
+     */
+    public function setExercises(\GymBundle\Entity\Exercises $exercises = null)
+    {
+        $this->exercises = $exercises;
+
+        return $this;
+    }
+
+    /**
+     * Get exercises
+     *
+     * @return \GymBundle\Entity\Exercises
+     */
+    public function getExercises()
+    {
+        return $this->exercises;
+    }
+
+    public function getExercisesNames() {
+        return $this->getExercises()->getNames();
+    }
+
+    public function getExercisesComments() {
+        return $this->getExercises()->getComments();;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->sets = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add set
+     *
+     * @param \GymBundle\Entity\Sets $set
+     *
+     * @return WorkoutsExercises
+     */
+    public function addSet(\GymBundle\Entity\Sets $set)
+    {
+        $this->sets[] = $set;
+
+        return $this;
+    }
+
+    /**
+     * Remove set
+     *
+     * @param \GymBundle\Entity\Sets $set
+     */
+    public function removeSet(\GymBundle\Entity\Sets $set)
+    {
+        $this->sets->removeElement($set);
+    }
+
+    /**
      * Get sets
      *
-     * @return integer
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getSets()
     {
-        return $this->_sets;
+        return $this->sets;
     }
 }

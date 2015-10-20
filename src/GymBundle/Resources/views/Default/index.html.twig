@@ -10,10 +10,13 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js'></script>
     <script src='http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.4.0/fullcalendar.min.js'></script>
     <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
-    <div class="container-fluid">
+    <div class="containe">
         <div id='calendar' class="col-lg-4"></div>
         <div class="col-sm-8">
             <h2>Workouts</h2>
+            <div class="exercises">
+
+            </div>
 
         </div>
     </div>
@@ -37,7 +40,7 @@
             $('#calendar').fullCalendar({
                 events: workouts,
                 eventClick: function(calEvent) {
-                    $.ajax( "/getWorkout/" + calEvent.id )
+                    $.ajax( "/app_dev.php/getWorkout/" + calEvent.id )
                         .done(function( json ) {
                             showExercise(json);
                         })
@@ -50,6 +53,19 @@
 
         function showExercise(response) {
             console.log(response);
+            $('.exercises').text("");
+            $.each(response, function( index, exercise ) {
+                        console.log(exercise.id);
+                        var exe = $('<div></div>').append($('<h3></h3>').text(exercise.name)),
+                        p = $('<p></p>');
+                        $.each(exercise.sets, function( index, set ) {
+                            p.append(set['1'] + 'x' + set['3'] + " ");
+                        }
+                        );
+                        exe.append(p);
+                        $('.exercises').append(exe);
+                    }
+            )
         }
 
     </script>

@@ -34,6 +34,7 @@ class DefaultController extends Controller
      */
     public function getWorkout($id_wo) {
 
+        $responseData = array();
         $normalizers = array(new GetSetMethodNormalizer());
         $encoders = array('json' => new JsonEncoder());
         $serealizer = new Serializer($normalizers, $encoders);
@@ -41,9 +42,35 @@ class DefaultController extends Controller
             ->getRepository('GymBundle:WorkoutsExercises')
             ->findBy(array('id_wo' => $id_wo));
 
+        $sets = $this->getDoctrine()
+            ->getRepository('GymBundle:Sets');
+
+        $setMes = $this->getDoctrine()
+            ->getRepository('GymBundle:SetsMeasures');
+        foreach ($exercises as $exercise) {
+            $exerciseSets = $sets->findBy(array('_id_wo_ex' => $exercise->getId()));
+
+            $exerciseSet = [];
+            foreach ($exerciseSets as $set) {
+                $setId = $set->getId();
+                $mew = $setMes->findBy(array('id_se' => $set->getId()));
+                foreach ($mew as $me) {
+                    $exerciseSet[$setId][$me->getIdMe()] = $me->getValues();
+                }
+            }
+
+            $responseData[] = array(
+                'id' => $exercise->getId(),
+                'name' => $exercise->getExercisesNames(),
+                'comment' => $exercise->getExercisesComments(),
+                'sets' => $exerciseSet,
+                );
+        }
 
         $response = new Response(
-            $serealizer->serialize($exercises, 'json')
+            json_encode(
+                $responseData
+            )
         );
         $response->headers->set('Content-Type', 'application/json');
         return $response;

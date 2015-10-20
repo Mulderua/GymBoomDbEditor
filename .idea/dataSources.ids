@@ -100,6 +100,8 @@
       <column name="id_se" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
       <column name="id_me" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
       <column name="_values" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <primary-key columns="_id"/>
       <foreign-key name="#FAKE_sets_measures_1" columns="id_me" ref-table="measures" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
       <foreign-key name="#FAKE_sets_measures_2" columns="id_se" ref-table="sets" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
     </table>

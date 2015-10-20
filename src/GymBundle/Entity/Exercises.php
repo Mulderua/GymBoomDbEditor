@@ -39,6 +39,11 @@ class Exercises
     protected $id_gr;
 
     /**
+     * @ORM\OneToMany(targetEntity="WorkoutsExercises", mappedBy="Exercises")
+     */
+    protected $products;
+
+    /**
      * Get id
      *
      * @return integer
@@ -118,5 +123,46 @@ class Exercises
     public function getIdGr()
     {
         return $this->id_gr;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->products = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add product
+     *
+     * @param \GymBundle\Entity\WorkoutsExercises $product
+     *
+     * @return Exercises
+     */
+    public function addProduct(\GymBundle\Entity\WorkoutsExercises $product)
+    {
+        $this->products[] = $product;
+
+        return $this;
+    }
+
+    /**
+     * Remove product
+     *
+     * @param \GymBundle\Entity\WorkoutsExercises $product
+     */
+    public function removeProduct(\GymBundle\Entity\WorkoutsExercises $product)
+    {
+        $this->products->removeElement($product);
+    }
+
+    /**
+     * Get products
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getProducts()
+    {
+        return $this->products;
     }
 }
