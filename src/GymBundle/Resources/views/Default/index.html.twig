@@ -1,0 +1,59 @@
+<html>
+<head>
+    <title>Calendar</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <link rel='stylesheet' href='http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.4.0/fullcalendar.min.css' />
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js'></script>
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.4.0/fullcalendar.min.js'></script>
+    <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+    <div class="container-fluid">
+        <div id='calendar' class="col-lg-4"></div>
+        <div class="col-sm-8">
+            <h2>Workouts</h2>
+
+        </div>
+    </div>
+
+
+
+    <script>
+        var workouts = [];
+        {% for day in calendar %}
+        var dayEvent = [];
+        dayEvent['id'] = '{{ day.id }}'
+        dayEvent['start'] = '{{ day.dateFormat }}';
+        dayEvent['title'] = '{{ day.names }}';
+        if (!dayEvent['title']) {
+            dayEvent['title'] = 'workout';
+        }
+        workouts.push(dayEvent);
+        {% endfor %}
+//        console.log(workouts);
+        $(document).ready(function() {
+            $('#calendar').fullCalendar({
+                events: workouts,
+                eventClick: function(calEvent) {
+                    $.ajax( "/getWorkout/" + calEvent.id )
+                        .done(function( json ) {
+                            showExercise(json);
+                        })
+                        .fail(function( jqxhr, textStatus, error ) {
+                            alert('Lohhhh!');
+                        });
+                }
+            })
+        });
+
+        function showExercise(response) {
+            console.log(response);
+        }
+
+    </script>
+
+
+</body>
+</html>

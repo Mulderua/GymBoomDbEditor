@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="SQLite -" uuid="d64b85dc-247a-4ad8-b599-8498f2bdd75e">
+    <database-info product="SQLite" version="3.8.9" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native"/>
+    <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed"/>
+    <schema name="" catalog=""/>
+    <table name="android_metadata" schema="" catalog="" type="TABLE">
+      <column name="locale" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+    </table>
+    <table name="bodymeasures" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_names" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="_units" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="_id"/>
+    </table>
+    <table name="complexes" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_names" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="id_pr" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <primary-key columns="_id"/>
+      <exported-key name="#FAKE_complexes_exercises_2" table="complexes_exercises" schema="" catalog="" columns="id_co"/>
+    </table>
+    <table name="complexes_exercises" schema="" catalog="" type="TABLE">
+      <column name="id_co" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="id_ex" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_numbers" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_sets" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <foreign-key name="#FAKE_complexes_exercises_1" columns="id_ex" ref-table="exercises" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
+      <foreign-key name="#FAKE_complexes_exercises_2" columns="id_co" ref-table="complexes" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
+    </table>
+    <table name="exercises" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_names" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="_comments" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="id_gr" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <primary-key columns="_id"/>
+      <exported-key name="#FAKE_complexes_exercises_1" table="complexes_exercises" schema="" catalog="" columns="id_ex"/>
+      <exported-key name="#FAKE_exercises_measures_2" table="exercises_measures" schema="" catalog="" columns="id_ex"/>
+      <exported-key name="#FAKE_workouts_exercises_1" table="workouts_exercises" schema="" catalog="" columns="id_ex"/>
+    </table>
+    <table name="exercises_measures" schema="" catalog="" type="TABLE">
+      <column name="id_ex" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="id_me" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <foreign-key name="#FAKE_exercises_measures_1" columns="id_me" ref-table="measures" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
+      <foreign-key name="#FAKE_exercises_measures_2" columns="id_ex" ref-table="exercises" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
+    </table>
+    <table name="groups" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_names" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="_id"/>
+    </table>
+    <table name="measurements" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_dates" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_comments" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="_id"/>
+      <exported-key name="#FAKE_measurements_bodymeasures_1" table="measurements_bodymeasures" schema="" catalog="" columns="id_mea"/>
+    </table>
+    <table name="measurements_bodymeasures" schema="" catalog="" type="TABLE">
+      <column name="id_mea" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="id_bo" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_values" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <foreign-key name="#FAKE_measurements_bodymeasures_1" columns="id_mea" ref-table="measurements" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
+    </table>
+    <table name="measures" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_names" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="_units" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="_id"/>
+      <exported-key name="#FAKE_exercises_measures_1" table="exercises_measures" schema="" catalog="" columns="id_me"/>
+      <exported-key name="#FAKE_sets_measures_1" table="sets_measures" schema="" catalog="" columns="id_me"/>
+    </table>
+    <table name="notepad" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_note" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="_id"/>
+    </table>
+    <table name="notes" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_dates" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_note" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="_id"/>
+    </table>
+    <table name="programs" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_names" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="_id"/>
+    </table>
+    <table name="sets" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_id_wo_ex" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_numbers" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_dones" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_comments" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="_id"/>
+      <foreign-key name="#FAKE_sets_1" columns="_id_wo_ex" ref-table="workouts_exercises" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
+      <exported-key name="#FAKE_sets_measures_2" table="sets_measures" schema="" catalog="" columns="id_se"/>
+    </table>
+    <table name="sets_measures" schema="" catalog="" type="TABLE">
+      <column name="id_se" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="id_me" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_values" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <foreign-key name="#FAKE_sets_measures_1" columns="id_me" ref-table="measures" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
+      <foreign-key name="#FAKE_sets_measures_2" columns="id_se" ref-table="sets" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
+    </table>
+    <table name="sqlite_sequence" schema="" catalog="" type="TABLE">
+      <column name="name" sqlType="" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="seq" sqlType="" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+    </table>
+    <table name="workouts" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_dates" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_times" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_comments" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="_finished" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_names" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="_id"/>
+      <exported-key name="#FAKE_workouts_exercises_2" table="workouts_exercises" schema="" catalog="" columns="id_wo"/>
+    </table>
+    <table name="workouts_exercises" schema="" catalog="" type="TABLE">
+      <column name="_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="id_wo" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="id_ex" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_numbers" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <column name="_notes" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="_sets" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
+      <primary-key columns="_id"/>
+      <foreign-key name="#FAKE_workouts_exercises_1" columns="id_ex" ref-table="exercises" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
+      <foreign-key name="#FAKE_workouts_exercises_2" columns="id_wo" ref-table="workouts" ref-schema="" ref-catalog="" ref-columns="_id" update-rule="3" delete-rule="0" deferrability="1"/>
+      <exported-key name="#FAKE_sets_1" table="sets" schema="" catalog="" columns="_id_wo_ex"/>
+    </table>
+  </data-source>
+</component>

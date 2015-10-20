@@ -1,0 +1,7 @@
+gym:
+    resource: "@GymBundle/Controller/"
+    type:     annotation
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
