@@ -65,20 +65,28 @@
         function getSets(sets) {
             var keys = [],
                     table = $('<table class="table"><thead></thead><tbody></tbody></table>');
-            $.each(sets, function( index, rep ) {
-                        var td = $('<td id="' + index + '"></td>').text('');
+                    thead = table.find('thead');
+                    thead.append($('<th>Мера</th>'));
+                    var it = 1;
+            $.each(sets, function( i, rep ) {
                         if (keys.length === 0) {
                             keys = $.map(rep, function(element,index) {return index});
                         }
-                        $.each(keys, function(index, key) {
-                            if (table.find('tbody').find('#'+key).length === 0) {
-                                table.find('tbody').append($('<tr id="' + key + '"></tr>'))
-                            }
-                            table.find('tbody').find('#'+key).append($('<span id="' + key + '"></span>').text(rep[key]));
-                            table.find('tbody').append(table.find('tbody').find('#'+key));
+                        // Fix attr throught bootstrap
+                        thead.append($('<th></th>').text(it).attr('align', 'center'))
+                        $.each(keys, function(j, key) {
+                          var tr = table.find('tbody').find('#'+key);
+                          if (tr.length === 0) {
+                              table.find('tbody').append($('<tr id="' + key + '"></tr>'))
+                              tr = table.find('tbody').find('#'+key);
+                              tr.append($('<td></td>').text(key));
+                          }
+                          // Fix attr throught bootstrap
+                          tr.append($('<td></td>').text(rep[key]).attr('id', i).attr('align', 'center'));
+                          table.find('tbody').append(tr);
                         });
+                        it++;
                     });
-            console.log(table);
             return table;
         }
 
