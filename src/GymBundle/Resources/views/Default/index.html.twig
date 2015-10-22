@@ -12,7 +12,7 @@
     <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
     <div class="containe">
         <div id='calendar' class="col-lg-4"></div>
-        <div class="col-sm-8">
+        <div class="col-sm-4">
             <h2>Workouts</h2>
             <div class="exercises">
 
@@ -55,17 +55,31 @@
             console.log(response);
             $('.exercises').text("");
             $.each(response, function( index, exercise ) {
-                        console.log(exercise.id);
-                        var exe = $('<div></div>').append($('<h3></h3>').text(exercise.name)),
-                        p = $('<p></p>');
-                        $.each(exercise.sets, function( index, set ) {
-                            p.append(set['1'] + 'x' + set['3'] + " ");
-                        }
-                        );
-                        exe.append(p);
+                        var     exe = $('<div id="' + exercise.id + '"></div>').append($('<h3></h3>').text(exercise.name));
+                        exe.append(getSets(exercise.sets));
                         $('.exercises').append(exe);
                     }
             )
+        }
+
+        function getSets(sets) {
+            var keys = [],
+                    table = $('<table class="table"><thead></thead><tbody></tbody></table>');
+            $.each(sets, function( index, rep ) {
+                        var td = $('<td id="' + index + '"></td>').text('');
+                        if (keys.length === 0) {
+                            keys = $.map(rep, function(element,index) {return index});
+                        }
+                        $.each(keys, function(index, key) {
+                            if (table.find('tbody').find('#'+key).length === 0) {
+                                table.find('tbody').append($('<tr id="' + key + '"></tr>'))
+                            }
+                            table.find('tbody').find('#'+key).append($('<span id="' + key + '"></span>').text(rep[key]));
+                            table.find('tbody').append(table.find('tbody').find('#'+key));
+                        });
+                    });
+            console.log(table);
+            return table;
         }
 
     </script>
