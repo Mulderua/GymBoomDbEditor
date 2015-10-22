@@ -15,7 +15,6 @@
         <div class="col-sm-4">
             <h2>Workouts</h2>
             <div class="exercises">
-
             </div>
 
         </div>
@@ -24,6 +23,12 @@
 
 
     <script>
+
+        var mesDic = {};
+        {% for measure in measures %}
+            mesDic['{{ measure.id }}'] = {'name':'{{ measure.names }}', 'unit':'{{ measure.units }}'};
+        {% endfor %}
+
         var workouts = [];
         {% for day in calendar %}
         var dayEvent = [];
@@ -58,6 +63,7 @@
                         var     exe = $('<div id="' + exercise.id + '"></div>').append($('<h3></h3>').text(exercise.name));
                         exe.append(getSets(exercise.sets));
                         $('.exercises').append(exe);
+                        $('.exercises').append($('<button></button>').text('+').addClass('btn btn-primary'));
                     }
             )
         }
@@ -66,23 +72,23 @@
             var keys = [],
                     table = $('<table class="table"><thead></thead><tbody></tbody></table>');
                     thead = table.find('thead');
-                    thead.append($('<th>Мера</th>'));
+                    thead.append($('<th></th>'));
                     var it = 1;
             $.each(sets, function( i, rep ) {
                         if (keys.length === 0) {
                             keys = $.map(rep, function(element,index) {return index});
                         }
                         // Fix attr throught bootstrap
-                        thead.append($('<th></th>').text(it).attr('align', 'center'))
+                        thead.append($('<th></th>').text(it))
                         $.each(keys, function(j, key) {
                           var tr = table.find('tbody').find('#'+key);
                           if (tr.length === 0) {
                               table.find('tbody').append($('<tr id="' + key + '"></tr>'))
                               tr = table.find('tbody').find('#'+key);
-                              tr.append($('<td></td>').text(key));
+                              tr.append($('<td></td>').text(mesDic[key]['name'] + ', ' + mesDic[key]['unit']));
                           }
                           // Fix attr throught bootstrap
-                          tr.append($('<td></td>').text(rep[key]).attr('id', i).attr('align', 'center'));
+                          tr.append($('<td></td>').text(rep[key]).attr('id', i));
                           table.find('tbody').append(tr);
                         });
                         it++;

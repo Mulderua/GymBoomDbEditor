@@ -22,17 +22,25 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
+        $measures = $this->getDoctrine()
+            ->getRepository('GymBundle:Measures')
+            ->findAll();
+
         $calendar = $this->getDoctrine()
             ->getRepository('GymBundle:Workouts')
             ->findAll();
 
-        return $this->render('GymBundle:Default:index.html.twig', array("calendar" => $calendar));
+        return $this->render('GymBundle:Default:index.html.twig', array(
+            "calendar" => $calendar, "measures" => $measures
+            )
+        );
     }
 
     /**
      * @Route("/getWorkout/{id_wo}", name="getWorkout")
      */
     public function getWorkout($id_wo) {
+
 
         $responseData = array();
         $normalizers = array(new GetSetMethodNormalizer());
