@@ -45,7 +45,6 @@ class DefaultController extends Controller
         $responseData = array();
         $normalizers = array(new GetSetMethodNormalizer());
         $encoders = array('json' => new JsonEncoder());
-        $serealizer = new Serializer($normalizers, $encoders);
         $exercises = $this->getDoctrine()
             ->getRepository('GymBundle:WorkoutsExercises')
             ->findBy(array('id_wo' => $id_wo));
@@ -83,4 +82,37 @@ class DefaultController extends Controller
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
+
+    /**
+     * @Route("/updateSet", name="updateSet")
+     */
+    public function updateSet(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $id = $request->get('id');
+        $mesID = $request->get('mesId');
+        $val = $request->get('val');
+
+        if (!$id || !$mesID || !$val) {
+            throw $this->createNotFoundException('Error with data');
+        }
+
+        $setMes = $this->getDoctrine()
+            ->getRepository('GymBundle:SetsMeasures')
+            ->findOneBy(array('id_se' => $id, 'id_me' => $mesID));
+
+        if ($setMes) {
+            $setMes->setValues($val);
+            $em->flush();
+        }
+
+        $response = new Response(
+            json_encode(
+                array('true' => 'ok')
+            )
+        );
+
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
 }

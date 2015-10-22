@@ -14,6 +14,8 @@
         <div id='calendar' class="col-lg-4"></div>
         <div class="col-sm-4">
             <h2>Workouts</h2>
+            <div class=""></div>
+            <div class="messages"></div>
             <div class="exercises">
             </div>
 
@@ -47,13 +49,73 @@
                 eventClick: function(calEvent) {
                     $.ajax( "/app_dev.php/getWorkout/" + calEvent.id )
                         .done(function( json ) {
-                            showExercise(json);
+                                showExercise(json);
                         })
                         .fail(function( jqxhr, textStatus, error ) {
                             alert('Lohhhh!');
                         });
                 }
-            })
+            });
+            $('.exercises').on('click', 'button',
+                    function() {
+                        if (this.id === 'addSet') {
+                            console.log('addSet');
+                        } else if ('subSet') {
+                            console.log('subSet');
+                        }
+                    }
+            );
+            $('.exercises').on('click', 'td',
+                    function() {
+                        var td = $(this);
+
+                        if( !td.children().length && td.attr('id') ) {
+                            var id = td.attr('id'),
+                            val = td.text();
+                            td.html($('<input value="" type="text"/>').attr('id', id).attr('size', 3).val(val));
+                            $('input').trigger('focus');
+                        }
+                    }
+            );
+            $('.exercises').on('change', 'input',
+                    function() {
+                        var data = returnTable($(this));
+                        editSet(data);
+                    }
+            );
+
+            $('.exercises').on('focusout', 'input',
+                    function() {
+                        returnTable($(this));
+                    }
+            );
+
+            function returnTable(elem) {
+                var mesId = elem.parent('td').parent('tr').attr('id'),
+                        id = elem.attr('id'),
+                        val = elem.val();
+                elem.parent('td').text(val);
+                return {'id': id, 'mesId': mesId, 'val': val};
+
+            }
+
+            function editSet(mes) {
+                $.ajax({url: "/app_dev.php/updateSet",
+                    type: 'POST',
+                    data: mes
+                })
+                        .done(function( json ) {
+                            $('.messages').html('<div class="alert alert-success fade in">' +
+                                    '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+
+                            '<strong>Sets were saved!</strong></div>')
+
+                        })
+                        .fail(function( jqxhr, textStatus, error ) {
+                            $('.messages').html('<div class="alert alert-danger fade in">' +
+                                    '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+
+                                    '<strong>Sets weren\'t save!</strong></div>')
+                        });
+            }
         });
 
         function showExercise(response) {
@@ -62,8 +124,11 @@
             $.each(response, function( index, exercise ) {
                         var     exe = $('<div id="' + exercise.id + '"></div>').append($('<h3></h3>').text(exercise.name));
                         exe.append(getSets(exercise.sets));
+                        exe.append($('<button></button>').attr('id', 'addSet').text('+').addClass('btn btn-primary btn-sm'));
+                        exe.append($('<span> </span>'));
+                        exe.append($('<button></button>').attr('id', 'subSet').text('-').addClass('btn btn-danger btn-sm'));
                         $('.exercises').append(exe);
-                        $('.exercises').append($('<button></button>').text('+').addClass('btn btn-primary'));
+
                     }
             )
         }
@@ -94,7 +159,7 @@
                         it++;
                     });
             return table;
-        }
+        };
 
     </script>
 
