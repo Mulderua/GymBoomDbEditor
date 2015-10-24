@@ -2,6 +2,8 @@
 
 namespace GymBundle\Controller;
 
+use Proxies\__CG__\GymBundle\Entity\SetsMeasures;
+use Proxies\__CG__\GymBundle\Entity\Sets;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -102,6 +104,60 @@ class DefaultController extends Controller
 
         if ($setMes) {
             $setMes->setValues($val);
+            $em->flush();
+        }
+
+        $response = new Response(
+            json_encode(
+                array('true' => 'ok')
+            )
+        );
+
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /**
+     * @Route("/addSet", name="addSet")
+     */
+    public function addSet(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+
+        foreach($request->request->all() as $req) {
+            $mesID = $req['mesId'];
+            $val = $req['val'];
+            $id = $req['id'];
+            $setId = $req['setId'];
+            if (!$id || !$mesID || !$val || !$setId) {
+                throw $this->createNotFoundException('Error with data');
+            }
+
+            if (!isset($newSetId)) {
+                $highest_id = $em->createQueryBuilder()
+                    ->select('MAX(e._id)')
+                    ->from('GymBundle:Sets', 'e')
+                    ->getQuery()
+                    ->getSingleScalarResult();
+
+                $setNum = count($this->getDoctrine()
+                    ->getRepository('GymBundle:Sets')
+                    ->findBy(array('_id_wo_ex' => $setId)))+1;
+                $set = new Sets();
+                $set->setIdWoEx($setId);
+                $set->setComments("");
+                $set->setDones("0");
+                $set->setId($highest_id+1);
+                $set->setNumbers($setNum);
+                $em->persist($set);
+                $em->flush();
+                $newSetId = $set->getId();
+            }
+
+            $setMes = new SetsMeasures();
+            $setMes->setIdSe($newSetId);
+            $setMes->setIdMe($mesID);
+            $setMes->setValues($val);
+            $em->persist($setMes);
             $em->flush();
         }
 

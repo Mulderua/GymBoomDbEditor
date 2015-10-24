@@ -66,6 +66,18 @@ class Sets
     }
 
     /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function setId($id)
+    {
+        $this->_id = $id;
+        return $this;
+    }
+
+
+        /**
      * Set idWoEx
      *
      * @param integer $idWoEx

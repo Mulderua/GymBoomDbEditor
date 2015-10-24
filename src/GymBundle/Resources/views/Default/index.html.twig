@@ -6,11 +6,18 @@
 <body>
     <link rel='stylesheet' href='http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.4.0/fullcalendar.min.css' />
     <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' />
+    <link rel="stylesheet" href="{{ asset('bundles/gym/css/styles.css') }}" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js'></script>
     <script src='http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.4.0/fullcalendar.min.js'></script>
     <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+    <header class="bgimage">
+        <div class="container" style="color: white; font-size: 64px;">
+            <h1>Workout DB</h1>
+        </div>
+    </header>
     <div class="containe">
+        <h2>Calendar</h2>
         <div id='calendar' class="col-lg-4"></div>
         <div class="col-sm-4">
             <h2>Workouts</h2>
@@ -25,7 +32,6 @@
 
 
     <script>
-
         var mesDic = {};
         {% for measure in measures %}
             mesDic['{{ measure.id }}'] = {'name':'{{ measure.names }}', 'unit':'{{ measure.units }}'};
@@ -47,24 +53,39 @@
             $('#calendar').fullCalendar({
                 events: workouts,
                 eventClick: function(calEvent) {
-                    $.ajax( "/app_dev.php/getWorkout/" + calEvent.id )
+                    getWorkout(calEvent.id);
+                }
+            });
+
+            function getWorkout(id) {
+                $.ajax( "/app_dev.php/getWorkout/" + id )
                         .done(function( json ) {
-                                showExercise(json);
+                            showExercise(json);
+                            $('.exercises').attr('id', id);
                         })
                         .fail(function( jqxhr, textStatus, error ) {
                             alert('Lohhhh!');
                         });
-                }
-            });
+            }
+
             $('.exercises').on('click', 'button',
                     function() {
                         if (this.id === 'addSet') {
-                            console.log('addSet');
+                            var nSet = {},
+                                    setId = $(this).parent().attr('id');
+                            $.each($(this).siblings().find('tr'), function( index, tr ) {
+                                var lestVal = $(tr).find('td').last(),
+                                val = returnTable(lestVal);
+                                val['setId'] = setId;
+                                nSet[index] = val;
+                            });
+                            addSet(nSet, setId);
                         } else if ('subSet') {
                             console.log('subSet');
                         }
                     }
             );
+
             $('.exercises').on('click', 'td',
                     function() {
                         var td = $(this);
@@ -91,9 +112,14 @@
             );
 
             function returnTable(elem) {
-                var mesId = elem.parent('td').parent('tr').attr('id'),
-                        id = elem.attr('id'),
-                        val = elem.val();
+                if (elem.parent('td').length) {
+                    var mesId = elem.parent('td').parent('tr').attr('id'),
+                            val = elem.val();
+                } else if (elem.parent('tr').length) {
+                    var mesId = elem.parent('tr').attr('id'),
+                            val = elem.text();
+                }
+                var id = elem.attr('id');
                 elem.parent('td').text(val);
                 return {'id': id, 'mesId': mesId, 'val': val};
 
@@ -115,7 +141,26 @@
                                     '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+
                                     '<strong>Sets weren\'t save!</strong></div>')
                         });
-            }
+            };
+
+            function addSet(mes, setId) {
+                $.ajax({url: "/app_dev.php/addSet",
+                    type: 'POST',
+                    data: mes
+                })
+                        .done(function( json ) {
+                            getWorkout($('.exercises').attr('id'));
+                            $('.messages').html('<div class="alert alert-success fade in">' +
+                                    '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+
+                                    '<strong>Sets were added!</strong></div>')
+
+                        })
+                        .fail(function( jqxhr, textStatus, error ) {
+                            $('.messages').html('<div class="alert alert-danger fade in">' +
+                                    '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+
+                                    '<strong>Sets weren\'t added!</strong></div>')
+                        });
+            };
         });
 
         function showExercise(response) {

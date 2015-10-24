@@ -1,0 +1,7 @@
+.bgimage {
+    background-image: url('../img/logo.png');
+    background-position: left;
+    background-size: cover;
+    height: 400px;
+    color: white;
+}
