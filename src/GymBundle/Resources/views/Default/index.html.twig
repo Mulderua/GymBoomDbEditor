@@ -70,18 +70,24 @@
 
             $('.exercises').on('click', 'button',
                     function() {
+                        var trs = $(this).siblings().find('tr');
                         if (this.id === 'addSet') {
                             var nSet = {},
                                     setId = $(this).parent().attr('id');
-                            $.each($(this).siblings().find('tr'), function( index, tr ) {
+                            $.each(trs, function( index, tr ) {
                                 var lestVal = $(tr).find('td').last(),
                                 val = returnTable(lestVal);
                                 val['setId'] = setId;
                                 nSet[index] = val;
                             });
+
+                            if ($.isEmptyObject(nSet))
+                            {
+                                nSet = {'setId': setId}
+                            }
                             addSet(nSet, setId);
-                        } else if ('subSet') {
-                            console.log('subSet');
+                        } else if (this.id === 'subSet') {
+                            subSet({'id':trs.first().find('td').last().attr('id')});
                         }
                     }
             );
@@ -161,13 +167,34 @@
                                     '<strong>Sets weren\'t added!</strong></div>')
                         });
             };
+
+            function subSet(setId) {
+                $.ajax({url: "/app_dev.php/subSet",
+                    type: 'POST',
+                    data: setId
+                })
+                        .done(function( json ) {
+                            getWorkout($('.exercises').attr('id'));
+                            $('.messages').html('<div class="alert alert-success fade in">' +
+                                    '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+
+                                    '<strong>Sets were added!</strong></div>')
+
+                        })
+                        .fail(function( jqxhr, textStatus, error ) {
+                            $('.messages').html('<div class="alert alert-danger fade in">' +
+                                    '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+
+                                    '<strong>Sets weren\'t added!</strong></div>')
+                        });
+            };
         });
 
         function showExercise(response) {
-            console.log(response);
             $('.exercises').text("");
             $.each(response, function( index, exercise ) {
                         var     exe = $('<div id="' + exercise.id + '"></div>').append($('<h3></h3>').text(exercise.name));
+                        exe.append($('<button></button>').attr('id', 'dellExe').text('Удалить').addClass('btn btn-danger btn-sm'));
+                        exe.append($('<span> </span>'));
+                        exe.append($('<button></button>').attr('id', 'getHistory').text('История').addClass('btn btn-primary btn-sm'));
                         exe.append(getSets(exercise.sets));
                         exe.append($('<button></button>').attr('id', 'addSet').text('+').addClass('btn btn-primary btn-sm'));
                         exe.append($('<span> </span>'));

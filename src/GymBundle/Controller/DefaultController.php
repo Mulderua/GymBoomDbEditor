@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
-
+use Doctrine\ORM\Query\ResultSetMapping;
 
 class DefaultController extends Controller
 {
@@ -104,6 +104,7 @@ class DefaultController extends Controller
 
         if ($setMes) {
             $setMes->setValues($val);
+            $em->persist($setMes);
             $em->flush();
         }
 
@@ -123,14 +124,45 @@ class DefaultController extends Controller
     public function addSet(Request $request) {
         $em = $this->getDoctrine()->getManager();
 
-        foreach($request->request->all() as $req) {
-            $mesID = $req['mesId'];
-            $val = $req['val'];
-            $id = $req['id'];
-            $setId = $req['setId'];
-            if (!$id || !$mesID || !$val || !$setId) {
+        $response = new Response(
+            json_encode(
+                array('true' => 'ok')
+            )
+        );
+        $response->headers->set('Content-Type', 'application/json');
+
+        $params = $request->request->all();
+
+        if (isset($params['setId'])) {
+            $rsm = new ResultSetMapping();
+            $rsm->addScalarResult('id_me','id_me');
+            $id =  $request->get('setId');
+            $req['id'] = $id;
+
+            $params = [];
+            $query = $em->createNativeQuery('SELECT es.id_me FROM exercises_measures es WHERE id_ex = ?', $rsm);
+            $query->setParameter(1, 36);
+            $results = $query->getResult();
+            foreach($results as $result) {
+                $req = [];
+                $req['mesId'] = $result['id_me'];
+                $req['val'] = 0;
+                //$req['id'];
+                $req['setId'] = $id;
+                $params[] = $req;
+            }
+
+        }
+
+        foreach ($params as $req) {
+            if (!isset($req['mesId']) || !isset($req['val']) || !isset($req['setId'])) {
                 throw $this->createNotFoundException('Error with data');
             }
+
+            $mesID = $req['mesId'];
+            $val = $req['val'];
+            //$id = $req['id'];
+            $setId = $req['setId'];
 
             if (!isset($newSetId)) {
                 $highest_id = $em->createQueryBuilder()
@@ -140,13 +172,13 @@ class DefaultController extends Controller
                     ->getSingleScalarResult();
 
                 $setNum = count($this->getDoctrine()
-                    ->getRepository('GymBundle:Sets')
-                    ->findBy(array('_id_wo_ex' => $setId)))+1;
+                        ->getRepository('GymBundle:Sets')
+                        ->findBy(array('_id_wo_ex' => $setId))) + 1;
                 $set = new Sets();
                 $set->setIdWoEx($setId);
                 $set->setComments("");
                 $set->setDones("0");
-                $set->setId($highest_id+1);
+                $set->setId($highest_id + 1);
                 $set->setNumbers($setNum);
                 $em->persist($set);
                 $em->flush();
@@ -158,6 +190,37 @@ class DefaultController extends Controller
             $setMes->setIdMe($mesID);
             $setMes->setValues($val);
             $em->persist($setMes);
+            $em->flush();
+        }
+
+
+        return $response;
+    }
+
+    /**
+     * @Route("/subSet", name="subSet")
+     */
+    public function subSet(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $id = $request->get('id');
+        if (!$id) {
+            throw $this->createNotFoundException('Error with data');
+        }
+
+        /** @var \GymBundle\Entity\Sets $sets */
+        $sets = $this->getDoctrine()
+            ->getRepository('GymBundle:Sets')
+            ->find($id);
+
+        $em->remove($sets);
+        $em->flush();
+
+        $setsMes = $this->getDoctrine()
+            ->getRepository('GymBundle:SetsMeasures')
+            ->findBy(array('id_se' => $id));
+
+        foreach ($setsMes as $setMes) {
+            $em->remove($setMes);
             $em->flush();
         }
 
